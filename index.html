@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>vidskid</title>
+<style>
+  html,body {height:100%;margin:0;background:#000;overflow:hidden}
+  video {
+    width:100%;height:100%;object-fit:cover;display:block;background:#000;
+  }
+  #missing {
+    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+    color:#ddd;background:#000;font-family:sans-serif;
+  }
+  #imgbox {
+    position:absolute;
+    top:50px;left:50px;
+    border-radius:3px;
+    user-select:none;
+    display:none;
+    transform:scale(0.9871875);
+    transform-origin:top left;
+    cursor:default;
+  }
+</style>
+</head>
+<body>
+<video id="v" playsinline autoplay loop muted preload="auto">
+  <source src="vidskid (online-video-cutter.com).mp4" type="video/mp4">
+</video>
+<div id="missing" style="display:none">vidskid.mp4 not found.</div>
+<img id="imgbox" src="fatatata.png" alt="fatatata" draggable="false">
+
+<script>
+(function(){
+  const v=document.getElementById('v');
+  const img=document.getElementById('imgbox');
+  const missing=document.getElementById('missing');
+
+  v.addEventListener('error',()=>{v.style.display='none';missing.style.display='flex';});
+  function play(){v.play().catch(()=>{});}
+  v.addEventListener('pause',play);
+  v.addEventListener('seeking',play);
+  setInterval(()=>{if(v.paused)play();},1000);
+  play();
+
+  img.addEventListener('dragstart', e => e.preventDefault());
+
+  let dragging=false,dx=0,dy=0;
+  img.addEventListener('mousedown',e=>{
+    dragging=true;
+    dx=e.clientX-img.offsetLeft;
+    dy=e.clientY-img.offsetTop;
+    e.preventDefault();
+  });
+  window.addEventListener('mouseup',()=>{dragging=false;});
+  window.addEventListener('mousemove',e=>{
+    if(!dragging)return;
+    img.style.left=(e.clientX-dx)+'px';
+    img.style.top=(e.clientY-dy)+'px';
+  });
+
+  window.addEventListener('keydown',e=>{
+    if(e.code==='Insert'){
+      img.style.display = img.style.display==='none' ? 'block' : 'none';
+    }
+  });
+
+  img.addEventListener('error',()=>{img.style.display='none';});
+})();
+</script>
+</body>
+</html>
